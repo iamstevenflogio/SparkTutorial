@@ -262,22 +262,6 @@
             left: 0;
         }
 
-        .screenshot-placeholder {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border: 2px dashed #cbd5e0;
-            border-radius: 12px;
-            padding: 3rem;
-            text-align: center;
-            margin: 1.5rem 0;
-            color: var(--text-light);
-            font-style: italic;
-            transition: all 0.3s ease;
-        }
-
-        .screenshot-placeholder:hover {
-            border-color: var(--primary-color);
-            background: linear-gradient(135deg, #fef7f0 0%, #fed7aa 100%);
-        }
 
         .requirements-section {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
@@ -464,8 +448,8 @@
                     <p>First, let's update your system and install the required dependencies for Apache Spark:</p>
                     
                     <div class="code-block">
-sudo apt update && apt upgrade -y
-sudo apt install default-jdk curl -y
+                        sudo apt update && apt upgrade -y <br>
+                        sudo apt install default-jdk curl -y
                     </div>
 
                     <div class="what-this-does">
@@ -477,9 +461,6 @@ sudo apt install default-jdk curl -y
                         </ul>
                     </div>
 
-                    <div class="screenshot-placeholder">
-                        📸 Screenshot Required: Terminal output showing successful package installation
-                    </div>
                 </div>
 
                 <div class="step">
@@ -491,9 +472,9 @@ sudo apt install default-jdk curl -y
                     <p>Download Spark 3.5.6 with Hadoop 3 support and extract it to the proper location:</p>
                     
                     <div class="code-block">
-wget https://dlcdn.apache.org/spark/spark-3.5.6/spark-3.5.6-bin-hadoop3.tgz
-tar -xzvf spark-3.5.6-bin-hadoop3.tgz
-sudo mv spark-3.5.6-bin-hadoop3 /opt/spark
+                        wget https://dlcdn.apache.org/spark/spark-3.5.6/spark-3.5.6-bin-hadoop3.tgz <br><br>
+                        tar -xzvf spark-3.5.6-bin-hadoop3.tgz <br><br>
+                        sudo mv spark-3.5.6-bin-hadoop3 /opt/spark
                     </div>
 
                     <div class="what-this-does">
@@ -505,9 +486,6 @@ sudo mv spark-3.5.6-bin-hadoop3 /opt/spark
                         </ul>
                     </div>
 
-                    <div class="screenshot-placeholder">
-                        📸 Screenshot Required: Terminal showing successful download and extraction
-                    </div>
                 </div>
 
                 <div class="step">
@@ -525,8 +503,8 @@ nano ~/.bashrc
                     <p>Add these lines to the end of the file:</p>
 
                     <div class="config-block">
-export SPARK_HOME=/opt/spark
-export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+                        export SPARK_HOME=/opt/spark <br>
+                        export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
                     </div>
 
                     <p>Apply the changes:</p>
@@ -544,9 +522,6 @@ source ~/.bashrc
                         </ul>
                     </div>
 
-                    <div class="screenshot-placeholder">
-                        📸 Screenshot Required: ~/.bashrc file showing the added environment variables
-                    </div>
                 </div>
 
                 <div class="step">
@@ -558,8 +533,8 @@ source ~/.bashrc
                     <p>Create a dedicated user for running Spark services (security best practice):</p>
                     
                     <div class="code-block">
-useradd spark
-chown -R spark:spark /opt/spark
+                        useradd spark <br><br>
+                        chown -R spark:spark /opt/spark
                     </div>
 
                     <div class="what-this-does">
@@ -571,9 +546,6 @@ chown -R spark:spark /opt/spark
                         </ul>
                     </div>
 
-                    <div class="screenshot-placeholder">
-                        📸 Screenshot Required: Terminal showing successful user creation and permission changes
-                    </div>
                 </div>
 
                 <div class="step">
@@ -591,19 +563,19 @@ nano /etc/systemd/system/spark-master.service
                     <p>Add the following configuration:</p>
 
                     <div class="config-block">
-[Unit]
-Description=Apache Spark Master
-After=network.target
+                        [Unit] <br>
+                        Description=Apache Spark Master <br>
+                        After=network.target <br><br>
 
-[Service]
-Type=forking
-User=spark
-Group=spark
-ExecStart=/opt/spark/sbin/start-master.sh
-ExecStop=/opt/spark/sbin/stop-master.sh
-
-[Install]
-WantedBy=multi-user.target
+                        [Service] <br>
+                        Type=forking <br>
+                        User=spark <br>
+                        Group=spark <br> 
+                        ExecStart=/opt/spark/sbin/start-master.sh <br>
+                        ExecStop=/opt/spark/sbin/stop-master.sh <br>
+                        <br><br>
+                        [Install] <br>
+                        WantedBy=multi-user.target<br>
                     </div>
 
                     <div class="what-this-does">
@@ -616,9 +588,6 @@ WantedBy=multi-user.target
                         </ul>
                     </div>
 
-                    <div class="screenshot-placeholder">
-                        📸 Screenshot Required: Service file content in the editor
-                    </div>
                 </div>
 
                 <div class="step">
@@ -630,25 +599,25 @@ WantedBy=multi-user.target
                     <p>Create a systemd service file for the Spark Slave:</p>
                     
                     <div class="code-block">
-nano /etc/systemd/system/spark-slave.service
+                        nano /etc/systemd/system/spark-slave.service
                     </div>
 
                     <p>Add the following configuration:</p>
 
                     <div class="config-block">
-[Unit]
-Description=Apache Spark Slave
-After=network.target
+                        [Unit] <br>
+                        Description=Apache Spark Slave<br>
+                        After=network.target<br><br>
 
-[Service]
-Type=forking
-User=spark
-Group=spark
-ExecStart=/opt/spark/sbin/start-slave.sh spark://localhost:7077
-ExecStop=/opt/spark/sbin/stop-slave.sh
+                        [Service]<br>
+                        Type=forking<br>
+                        User=spark<br>
+                        Group=spark<br>
+                        ExecStart=/opt/spark/sbin/start-slave.sh spark://localhost:7077<br>
+                        ExecStop=/opt/spark/sbin/stop-slave.sh<br><br>
 
-[Install]
-WantedBy=multi-user.target
+                        [Install]<br>
+                        WantedBy=multi-user.target
                     </div>
 
                     <div class="important-note">
@@ -665,9 +634,6 @@ WantedBy=multi-user.target
                         </ul>
                     </div>
 
-                    <div class="screenshot-placeholder">
-                        📸 Screenshot Required: Service file with the correct configuration
-                    </div>
                 </div>
 
                 <div class="step">
@@ -679,11 +645,11 @@ WantedBy=multi-user.target
                     <p>Reload systemd and start the services:</p>
                     
                     <div class="code-block">
-systemctl daemon-reload
-systemctl start spark-master
-systemctl enable spark-master
-systemctl start spark-slave
-systemctl enable spark-slave
+                        systemctl daemon-reload <br><br>
+                        systemctl start spark-master<br><br>
+                        systemctl enable spark-master<br><br>
+                        systemctl start spark-slave<br><br>
+                        systemctl enable spark-slave<br><br>
                     </div>
 
                     <div class="what-this-does">
@@ -719,9 +685,6 @@ systemctl status spark-master
                             </div>
                         </div>
 
-                        <div class="screenshot-placeholder">
-                            📸 Screenshot Required: Full terminal output showing active spark-master service
-                        </div>
                     </div>
 
                     <div class="requirement-item">
@@ -744,9 +707,6 @@ systemctl status spark-slave
                             </div>
                         </div>
 
-                        <div class="screenshot-placeholder">
-                            📸 Screenshot Required: Full terminal output showing active spark-slave service
-                        </div>
                     </div>
 
                     <div class="requirement-item">
@@ -768,9 +728,6 @@ spark-shell
                             </div>
                         </div>
 
-                        <div class="screenshot-placeholder">
-                            📸 Screenshot Required: Terminal showing successful Spark Shell startup with Scala prompt
-                        </div>
                     </div>
 
                     <div class="requirement-item">
@@ -792,9 +749,6 @@ http://localhost:4040
                                     <div class="metric-card">Task distribution across executors</div>
                                 </div>
                             </div>
-                            <div class="screenshot-placeholder">
-                                📸 Screenshot Required: Jobs tab showing job information and metrics
-                            </div>
                         </div>
 
                         <div class="step" style="margin: 2rem 0;">
@@ -807,9 +761,6 @@ http://localhost:4040
                                     <div class="metric-card">Runtime Information</div>
                                     <div class="metric-card">Classpath Entries</div>
                                 </div>
-                            </div>
-                            <div class="screenshot-placeholder">
-                                📸 Screenshot Required: Environment tab showing configuration details
                             </div>
                         </div>
 
@@ -824,9 +775,6 @@ http://localhost:4040
                                     <div class="metric-card">Shuffle operations performance</div>
                                 </div>
                             </div>
-                            <div class="screenshot-placeholder">
-                                📸 Screenshot Required: Executors tab showing detailed executor information
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -840,17 +788,13 @@ http://localhost:4040
             <p>You've successfully installed and configured Apache Spark. Start processing big data like a pro!</p>
             <div class="social-links">
                 <a href="#" target="_blank">Share on LinkedIn</a>
-                <a href="#" target="_blank">Follow Author</a>
-                <a href="#" target="_blank">View More Tutorials</a>
+                <a href="https://www.linkedin.com/in/steven-iefel-flogio-784037205/" target="_blank">Follow Author</a>
+                <a href="" target="_blank">View More Tutorials</a>
             </div>
             <p style="margin-top: 2rem; opacity: 0.8;">
                 Created by <strong>Steven Iefel D. Flogio</strong> | 
-                Apache Spark Installation Guide © 2024
+                Apache Spark Installation Guide © 2025
             </p>
         </div>
     </footer>
 
-    <script>
-        // Smooth scrolling for internal links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e
