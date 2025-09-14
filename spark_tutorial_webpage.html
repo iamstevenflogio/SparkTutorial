@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Only Apache Spark Tutorial You'll Ever Need | Complete Installation Guide</title>
+    <meta name="description" content="Master Apache Spark installation with this comprehensive tutorial. Step-by-step guide for Linux systems with screenshots and expert tips.">
+    <meta name="author" content="Steven Iefel D. Flogio">
+    
+    <!-- Open Graph for LinkedIn sharing -->
+    <meta property="og:title" content="The Only Apache Spark Tutorial You'll Ever Need">
+    <meta property="og:description" content="Complete Apache Spark installation guide with screenshots and configurations">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://spark.apache.org/images/spark-logo-trademark.png">
+    
+    <style>
+        :root {
+            --primary-color: #e25822;
+            --secondary-color: #2c5282;
+            --accent-color: #38b2ac;
+            --text-dark: #2d3748;
+            --text-light: #4a5568;
+            --bg-light: #f7fafc;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .hero {
+            background: var(--gradient);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="0%" r="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><rect width="100%" height="100%" fill="url(%23a)"/></svg>');
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: slideInUp 1s ease-out;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: slideInUp 1s ease-out 0.2s both;
+        }
+
+        .author-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.3);
+            animation: slideInUp 1s ease-out 0.4s both;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .content {
+            background: white;
+            margin: -3rem auto 0;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .overview {
+            background: var(--bg-light);
+            padding: 3rem;
+            border-bottom: 3px solid var(--primary-color);
+            text-align: center;
+        }
+
+        .overview h2 {
+            color: var(--secondary-color);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .overview p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            padding: 3rem;
+        }
+
+        .step {
+            margin-bottom: 4rem;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-number {
+            background: var(--gradient);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .step h3 {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            border: 1px solid #2d3748;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+        }
+
+        .config-block {
+            background: #2d3748;
+            color: #a0aec0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .what-this-does {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0fdf4 100%);
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .what-this-does h4 {
+            color: #166534;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .what-this-does h4::before {
+            content: '💡';
+            margin-right: 0.5rem;
+        }
+
+        .what-this-does ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .what-this-does li {
+            padding: 0.3rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .what-this-does li::before {
+            content: '✓';
+            color: #16a34a;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--text-light);
+            font-style: italic;
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-placeholder:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, #fef7f0 0%, #fed7aa 100%);
+        }
+
+        .requirements-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 3rem;
+            border-radius: 15px;
+            margin: 3rem 0;
+            border: 1px solid #f59e0b;
+        }
+
+        .requirements-section h2 {
+            color: #92400e;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .requirement-item {
+            background: white;
+            margin: 1.5rem 0;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .requirement-item h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .discussion {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+            border: 1px solid #c4b5fd;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .discussion h4 {
+            color: #5b21b6;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .discussion h4::before {
+            content: '🔍';
+            margin-right: 0.5rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .important-note {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 1px solid #f87171;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid #dc2626;
+        }
+
+        .important-note h4 {
+            color: #dc2626;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .important-note h4::before {
+            content: '⚠️';
+            margin-right: 0.5rem;
+        }
+
+        .footer {
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .social-links {
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-links a:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .step {
+                padding: 1.5rem;
+            }
+            
+            .step-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .main-content {
+                padding: 2rem 1rem;
+            }
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator"></div>
+    
+    <header class="hero">
+        <div class="hero-content">
+            <h1>The Only Apache Spark Tutorial You'll Ever Need</h1>
+            <p class="subtitle">Master Apache Spark 3.5.6 Installation & Configuration with This Complete Step-by-Step Guide</p>
+            <div class="author-badge">
+                <strong>By: Steven Iefel D. Flogio</strong>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main class="content">
+            <section class="overview">
+                <h2>🚀 Overview</h2>
+                <p>This comprehensive guide provides a step-by-step walkthrough for installing and configuring Apache Spark 3.5.6 on a Linux system, setting up master and slave services, and exploring the powerful Spark Shell interface. Perfect for developers, data engineers, and anyone looking to harness the power of big data processing.</p>
+            </section>
+
+            <div class="main-content">
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h3>System Updates and Dependencies</h3>
+                    </div>
+                    
+                    <p>First, let's update your system and install the required dependencies for Apache Spark:</p>
+                    
+                    <div class="code-block">
+sudo apt update && apt upgrade -y
+sudo apt install default-jdk curl -y
+                    </div>
+
+                    <div class="what-this-does">
+                        <h4>What this does:</h4>
+                        <ul>
+                            <li>Updates package lists and upgrades existing packages</li>
+                            <li>Installs Java Development Kit (required for Spark)</li>
+                            <li>Installs curl for downloading files</li>
+                        </ul>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📸 Screenshot Required: Terminal output showing successful package installation
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h3>Download and Extract Apache Spark</h3>
+                    </div>
+                    
+                    <p>Download Spark 3.5.6 with Hadoop 3 support and extract it to the proper location:</p>
+                    
+                    <div class="code-block">
+wget https://dlcdn.apache.org/spark/spark-3.5.6/spark-3.5.6-bin-hadoop3.tgz
+tar -xzvf spark-3.5.6-bin-hadoop3.tgz
+sudo mv spark-3.5.6-bin-hadoop3 /opt/spark
+                    </div>
+
+                    <div class="what-this-does">
+                        <h4>What this does:</h4>
+                        <ul>
+                            <li>Downloads the Spark binary distribution</li>
+                            <li>Extracts the compressed file</li>
+                            <li>Moves Spark to the standard /opt/spark directory</li>
+                        </ul>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📸 Screenshot Required: Terminal showing successful download and extraction
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h3>Configure Environment Variables</h3>
+                    </div>
+                    
+                    <p>Set up environment variables to make Spark accessible system-wide:</p>
+                    
+                    <div class="code-block">
+nano ~/.bashrc
+                    </div>
+
+                    <p>Add these lines to the end of the file:</p>
+
+                    <div class="config-block">
+export SPARK_HOME=/opt/spark
+export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+                    </div>
+
+                    <p>Apply the changes:</p>
+
+                    <div class="code-block">
+source ~/.bashrc
+                    </div>
+
+                    <div class="what-this-does">
+                        <h4>What this does:</h4>
+                        <ul>
+                            <li>Sets SPARK_HOME to point to the installation directory</li>
+                            <li>Adds Spark binaries to the system PATH</li>
+                            <li>Makes Spark commands available system-wide</li>
+                        </ul>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📸 Screenshot Required: ~/.bashrc file showing the added environment variables
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <h3>Create Spark User and Set Permissions</h3>
+                    </div>
+                    
+                    <p>Create a dedicated user for running Spark services (security best practice):</p>
+                    
+                    <div class="code-block">
+useradd spark
+chown -R spark:spark /opt/spark
+                    </div>
+
+                    <div class="what-this-does">
+                        <h4>What this does:</h4>
+                        <ul>
+                            <li>Creates a system user named 'spark'</li>
+                            <li>Sets ownership of the Spark directory to the spark user</li>
+                            <li>Enhances security by running services under a dedicated user</li>
+                        </ul>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📸 Screenshot Required: Terminal showing successful user creation and permission changes
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <h3>Configure Spark Master Service</h3>
+                    </div>
+                    
+                    <p>Create a systemd service file for the Spark Master:</p>
+                    
+                    <div class="code-block">
+nano /etc/systemd/system/spark-master.service
+                    </div>
+
+                    <p>Add the following configuration:</p>
+
+                    <div class="config-block">
+[Unit]
+Description=Apache Spark Master
+After=network.target
+
+[Service]
+Type=forking
+User=spark
+Group=spark
+ExecStart=/opt/spark/sbin/start-master.sh
+ExecStop=/opt/spark/sbin/stop-master.sh
+
+[Install]
+WantedBy=multi-user.target
+                    </div>
+
+                    <div class="what-this-does">
+                        <h4>What this does:</h4>
+                        <ul>
+                            <li>Creates a systemd service for automatic startup</li>
+                            <li>Configures the service to run as the spark user</li>
+                            <li>Sets up proper start and stop commands</li>
+                            <li>Ensures the service starts after network is available</li>
+                        </ul>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📸 Screenshot Required: Service file content in the editor
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">6</div>
+                        <h3>Configure Spark Slave Service</h3>
+                    </div>
+                    
+                    <p>Create a systemd service file for the Spark Slave:</p>
+                    
+                    <div class="code-block">
+nano /etc/systemd/system/spark-slave.service
+                    </div>
+
+                    <p>Add the following configuration:</p>
+
+                    <div class="config-block">
+[Unit]
+Description=Apache Spark Slave
+After=network.target
+
+[Service]
+Type=forking
+User=spark
+Group=spark
+ExecStart=/opt/spark/sbin/start-slave.sh spark://localhost:7077
+ExecStop=/opt/spark/sbin/stop-slave.sh
+
+[Install]
+WantedBy=multi-user.target
+                    </div>
+
+                    <div class="important-note">
+                        <h4>Important:</h4>
+                        <p>Replace <code>localhost</code> with your actual server's IP address if setting up a distributed cluster.</p>
+                    </div>
+
+                    <div class="what-this-does">
+                        <h4>What this does:</h4>
+                        <ul>
+                            <li>Creates a systemd service for the Spark worker</li>
+                            <li>Configures the worker to connect to the master on port 7077</li>
+                            <li>Sets up automatic startup and shutdown</li>
+                        </ul>
+                    </div>
+
+                    <div class="screenshot-placeholder">
+                        📸 Screenshot Required: Service file with the correct configuration
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">7</div>
+                        <h3>Start and Enable Services</h3>
+                    </div>
+                    
+                    <p>Reload systemd and start the services:</p>
+                    
+                    <div class="code-block">
+systemctl daemon-reload
+systemctl start spark-master
+systemctl enable spark-master
+systemctl start spark-slave
+systemctl enable spark-slave
+                    </div>
+
+                    <div class="what-this-does">
+                        <h4>What this does:</h4>
+                        <ul>
+                            <li>Reloads systemd to recognize new service files</li>
+                            <li>Starts both master and slave services</li>
+                            <li>Enables services to start automatically on boot</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <section class="requirements-section">
+                    <h2>📋 Required Screenshots and Status Checks</h2>
+
+                    <div class="requirement-item">
+                        <h3>1. Status of the Spark Master</h3>
+                        <p>Check the Spark Master service status:</p>
+                        
+                        <div class="code-block">
+systemctl status spark-master
+                        </div>
+
+                        <div class="discussion">
+                            <h4>Discussion:</h4>
+                            <p>The Spark Master service acts as the cluster manager, responsible for:</p>
+                            <div class="metrics-grid">
+                                <div class="metric-card">Resource allocation across the cluster</div>
+                                <div class="metric-card">Scheduling applications</div>
+                                <div class="metric-card">Managing worker nodes</div>
+                                <div class="metric-card">Providing the web-based monitoring interface</div>
+                                <div class="metric-card">Coordinating job execution</div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            📸 Screenshot Required: Full terminal output showing active spark-master service
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <h3>2. Status of the Spark Slave</h3>
+                        <p>Check the Spark Slave service status:</p>
+                        
+                        <div class="code-block">
+systemctl status spark-slave
+                        </div>
+
+                        <div class="discussion">
+                            <h4>Discussion:</h4>
+                            <p>The Spark Slave (Worker) service is responsible for:</p>
+                            <div class="metrics-grid">
+                                <div class="metric-card">Executing tasks assigned by the master</div>
+                                <div class="metric-card">Managing local resources (CPU, memory)</div>
+                                <div class="metric-card">Running executor processes</div>
+                                <div class="metric-card">Reporting status back to the master</div>
+                                <div class="metric-card">Handling data locality for efficient processing</div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            📸 Screenshot Required: Full terminal output showing active spark-slave service
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <h3>3. Run the Spark Shell (CLI)</h3>
+                        <p>Launch the Spark Shell:</p>
+                        
+                        <div class="code-block">
+spark-shell
+                        </div>
+
+                        <div class="discussion">
+                            <h4>Discussion:</h4>
+                            <p>The Spark Shell provides:</p>
+                            <div class="metrics-grid">
+                                <div class="metric-card">Interactive Scala environment for Spark operations</div>
+                                <div class="metric-card">Direct access to SparkContext and SparkSession</div>
+                                <div class="metric-card">Real-time data processing capabilities</div>
+                                <div class="metric-card">Testing and development environment</div>
+                            </div>
+                        </div>
+
+                        <div class="screenshot-placeholder">
+                            📸 Screenshot Required: Terminal showing successful Spark Shell startup with Scala prompt
+                        </div>
+                    </div>
+
+                    <div class="requirement-item">
+                        <h3>4. Spark Shell User Interface</h3>
+                        <p>Access the Spark Web UI by opening a browser and navigating to:</p>
+                        
+                        <div class="code-block">
+http://localhost:4040
+                        </div>
+
+                        <div class="step" style="margin: 2rem 0;">
+                            <h4>a. Jobs Tab</h4>
+                            <div class="discussion">
+                                <h4>Key Metrics to Monitor:</h4>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">Job completion times</div>
+                                    <div class="metric-card">Failed jobs and their causes</div>
+                                    <div class="metric-card">Stage-level performance</div>
+                                    <div class="metric-card">Task distribution across executors</div>
+                                </div>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                📸 Screenshot Required: Jobs tab showing job information and metrics
+                            </div>
+                        </div>
+
+                        <div class="step" style="margin: 2rem 0;">
+                            <h4>b. Environment Tab</h4>
+                            <div class="discussion">
+                                <h4>What you'll see:</h4>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">Spark Properties and configurations</div>
+                                    <div class="metric-card">System Properties and JVM settings</div>
+                                    <div class="metric-card">Runtime Information</div>
+                                    <div class="metric-card">Classpath Entries</div>
+                                </div>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                📸 Screenshot Required: Environment tab showing configuration details
+                            </div>
+                        </div>
+
+                        <div class="step" style="margin: 2rem 0;">
+                            <h4>c. Executors Tab</h4>
+                            <div class="discussion">
+                                <h4>Performance Indicators:</h4>
+                                <div class="metrics-grid">
+                                    <div class="metric-card">Executor resource utilization</div>
+                                    <div class="metric-card">Task distribution and completion</div>
+                                    <div class="metric-card">Memory and disk usage</div>
+                                    <div class="metric-card">Shuffle operations performance</div>
+                                </div>
+                            </div>
+                            <div class="screenshot-placeholder">
+                                📸 Screenshot Required: Executors tab showing detailed executor information
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <h3>🎉 Congratulations!</h3>
+            <p>You've successfully installed and configured Apache Spark. Start processing big data like a pro!</p>
+            <div class="social-links">
+                <a href="#" target="_blank">Share on LinkedIn</a>
+                <a href="#" target="_blank">Follow Author</a>
+                <a href="#" target="_blank">View More Tutorials</a>
+            </div>
+            <p style="margin-top: 2rem; opacity: 0.8;">
+                Created by <strong>Steven Iefel D. Flogio</strong> | 
+                Apache Spark Installation Guide © 2024
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e
